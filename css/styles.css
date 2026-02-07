@@ -93,17 +93,8 @@ input[type="tel"]:focus, input[type="text"]:focus {
 
 /* Celebration message styling as per spec */
 .celebration-message {
-    font-size: 48px;
-    font-weight: 700;
-    color: white;
-    text-align: center;
-    text-shadow: 0 4px 12px rgba(0, 0, 0, 0.7);
-    animation: fade-in-pulse 2s ease-in-out;
-}
-
-/* Congratulations message styling */
-.congratulations-message {
-    font-size: 2.5rem; /* text-4xl */
+    font-family: 'Pinyon Script', cursive; /* Apply romantic font */
+    font-size: 60px; /* Make it larger for script font */
     font-weight: 700;
     color: white;
     text-align: center;
@@ -397,9 +388,26 @@ input[type="tel"]:focus, input[type="text"]:focus {
     --card-size: 3.5rem; /* Default for mobile, 56px */
 }
 
-@media (max-width: 475px) { /* Extra small devices */
+@media (max-width: 375px) { /* Ultra small devices */
     :root {
-        --card-size: 3rem;  /* 48px */
+        --card-size: 1.5rem; /* 24px */
+    }
+}
+
+@media (min-width: 376px) and (max-width: 475px) { /* Extra small devices */
+    :root {
+        --card-size: 1.75rem;  /* 28px */
+    }
+}
+
+@media (min-width: 476px) and (max-width: 640px) { /* Mobile */
+    .flip-card {
+        /* This media query block is now redundant due to --card-size, but keeping the comment for context */
+    }
+
+    #stage-4-ask .relative {
+        padding: 30px 20px !important;
+        max-width: 350px;
     }
 }
 

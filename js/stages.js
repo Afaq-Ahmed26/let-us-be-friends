@@ -1,5 +1,5 @@
-const CORRECT_PHONE_ANSWER = "03001234567"; // Your phone number
-const CORRECT_DISH_ANSWER = "pizza"; // Example: The predefined correct favorite dish (case-insensitive)
+const CORRECT_PHONE_ANSWER = "8882196846"; // Your phone number
+const CORRECT_DISH_ANSWER = "biryani"; // Example: The predefined correct favorite dish (case-insensitive)
 
 document.addEventListener('DOMContentLoaded', () => {
     // Stage 1 Elements
@@ -27,6 +27,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Stage 5 Celebration Elements (formerly stage-4)
     const stage5Celebration = document.getElementById('stage-5-celebration');
+    let fireworks = null; // Global variable for Fireworks.js instance
 
     // Function to normalize phone number input (remove non-digits)
     function normalizePhoneNumber(number) {
@@ -84,8 +85,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- STAGE 3: MEMORY CARD GAME ---
     const images = [
-        'https://images.pexels.com/photos/1024984/pexels-photo-1024984.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260',
-        'https://images.pexels.com/photos/1467923/pexels-photo-1467923.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260',
+        'https://images.pexels.com/photos/1025469/pexels-photo-1025469.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260', // New replacement 1
+        'https://images.pexels.com/photos/1470405/pexels-photo-1470405.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260', // New replacement 2
         'https://images.pexels.com/photos/2055236/pexels-photo-2055236.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260',
         'https://images.pexels.com/photos/2253870/pexels-photo-2253870.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260',
         'https://images.pexels.com/photos/3171837/pexels-photo-3171837.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260',
@@ -93,11 +94,11 @@ document.addEventListener('DOMContentLoaded', () => {
         'https://images.pexels.com/photos/247929/pexels-photo-247929.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260',
         'https://images.pexels.com/photos/1054366/pexels-photo-1054366.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260',
         'https://images.pexels.com/photos/1031264/pexels-photo-1031264.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260',
-        'https://images.pexels.com/photos/931018/pexels-photo-931018.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260',
-        'https://images.pexels.com/photos/950069/pexels-photo-950069.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260',
-        'https://images.pexels.com/photos/1036357/pexels-photo-1036357.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260',
-        'https://images.pexels.com/photos/1367098/pexels-photo-1367098.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260',
-        'https://images.pexels.com/photos/157675/pexels-photo-157675.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260',
+        'https://images.pexels.com/photos/2387873/pexels-photo-2387873.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260',
+        'https://images.pexels.com/photos/206359/pexels-photo-206359.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260',
+        'https://images.pexels.com/photos/1485894/pexels-photo-1485894.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260',
+        'https://images.pexels.com/photos/1488315/pexels-photo-1488315.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260', // Original good image, kept as context for replacement
+        'https://images.pexels.com/photos/1769305/pexels-photo-1769305.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260', // Replacement for index 13
         'https://images.pexels.com/photos/1043471/pexels-photo-1043471.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260',
         'https://images.pexels.com/photos/1000445/pexels-photo-1000445.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260',
         'https://images.pexels.com/photos/935967/pexels-photo-935967.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260',
@@ -157,7 +158,7 @@ document.addEventListener('DOMContentLoaded', () => {
                                 <span class="text-xl">❓</span>
                             </div>
                             <div class="flip-card-back border border-white border-opacity-20"> <!-- Thin border -->
-                                <img src="${cardImages[cardIndex]}" class="w-full h-full object-cover rounded-sm">
+                                <img src="${cardImages[cardIndex]}" class="w-full h-full object-cover rounded-sm" loading="lazy" onerror="console.error(\'Image failed to load:\', this.src);">
                             </div>
                         </div>
                     `;
@@ -270,41 +271,66 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- STAGE 5: CELEBRATION --- (formerly stage-4)
     const stage5CelebrationMessage = stage5Celebration.querySelector('h1'); // Get the message element
 
-    function launchCelebrationFireworks() {
+    function launchFireworksAndConfetti() {
         const duration = 15 * 1000; // 15 seconds of continuous fireworks
         const animationEnd = Date.now() + duration;
+        let lastFirework = 0; // To track time for proper fireworks
         
         const colors = ['#FFB6C1', '#FF69B4', '#FFD700', '#9370DB', '#FF1493', '#FFC0CB'];
         
         (function frame() {
-            // Launch from left side
+            // Launch from left side - more like a firework shot
             confetti({
-                particleCount: 3,
-                angle: 60,
-                spread: 55,
+                particleCount: 1, // Single "rocket" particle
+                angle: 90, // Upward shot
+                spread: 90, // Wide spread for the burst
                 origin: { x: 0, y: 0.8 },
-                colors: colors
+                colors: colors,
+                startVelocity: 50, // Slightly less strong upward velocity
+                scalar: 0.8 // Slightly smaller particles
             });
             
-            // Launch from right side
+            // Launch from right side - more like a firework shot
             confetti({
-                particleCount: 3,
-                angle: 120,
-                spread: 55,
+                particleCount: 1, // Single "rocket" particle
+                angle: 90, // Upward shot
+                spread: 90, // Wide spread for the burst
                 origin: { x: 1, y: 0.8 },
-                colors: colors
+                colors: colors,
+                startVelocity: 50, // Slightly less strong upward velocity
+                scalar: 0.8 // Slightly smaller particles
             });
             
-            // Random center bursts
+            // Random center bursts - more like an explosion (current effect)
             if (Math.random() < 0.3) {
                 confetti({
-                    particleCount: 50,
-                    spread: 360,
+                    particleCount: 30, // Fewer particles for a less dense burst
+                    spread: 120, // Wider spread for a firework explosion
                     origin: { 
                         x: Math.random(), 
                         y: Math.random() * 0.5 
                     },
-                    colors: colors
+                    colors: colors,
+                    startVelocity: 45, // Medium velocity
+                    decay: 0.9, // Slower decay
+                    gravity: 0.1, // Slight gravity to make them fall
+                    scalar: 1.2 // Slightly larger particles for emphasis
+                });
+            }
+
+            // Proper Fireworks effect (like videos)
+            if (Date.now() - lastFirework > 800) { // Trigger every 0.8 seconds
+                lastFirework = Date.now();
+                confetti.fireworks({
+                    spread: 120,
+                    startVelocity: 50,
+                    decay: 0.9,
+                    colors: colors,
+                    scalar: 1.5, // Larger for more impact
+                    origin: {
+                        x: Math.random(),
+                        y: Math.random() * 0.7 + 0.2 // Higher up for fireworks
+                    }
                 });
             }
 
@@ -322,6 +348,23 @@ document.addEventListener('DOMContentLoaded', () => {
             stage5CelebrationMessage.style.opacity = '1';
         }, 100); // Small delay to ensure transition applies
 
-        launchCelebrationFireworks(); // Trigger the fireworks
+        // Initialize Fireworks.js
+        if (!fireworks && typeof Fireworks !== 'undefined' && stage5Celebration) {
+            const container = stage5Celebration;
+            const options = {
+                maxRockets: 3,             // max # of rockets to be launched simultaneously
+                rocketSpawnInterval: 150,  // ms, interval between rockets in a volley
+                numParticles: 100,         // # of particles for each explosion
+                explosionMinHeight: 0.2,   // in relation to container
+                explosionMaxHeight: 0.9,   // in relation to container
+                explosionChance: 0.08     // chance in % of 1 explosion per rocket
+            };
+            fireworks = new Fireworks.default(container, options); // Use .default for UMD module
+            fireworks.start();
+        } else if (fireworks) {
+            fireworks.start(); // If already initialized, just restart
+        }
+
+        launchFireworksAndConfetti(); // Trigger the combined effects
     }
 });
