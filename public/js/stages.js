@@ -125,27 +125,28 @@ document.addEventListener('DOMContentLoaded', () => {
     function createBoard() {
         gameBoard.innerHTML = '';
         gameBoard.classList.add('justify-center', 'items-center'); // Center the grid
-        gameBoard.style.gridTemplateColumns = `repeat(${heartLayout[0].length}, 1fr)`;
-        gameBoard.style.width = '90%';
-        gameBoard.style.maxWidth = '90vw';
+        // gameBoard.style.gridTemplateColumns = `repeat(${heartLayout[0].length}, 1fr)`; // Removed this
+        // Set the gap using CSS property, will be applied via CSS instead of inline JS
+        gameBoard.style.setProperty('gap', '2px'); // Set 2px gap as requested
+        gameBoard.style.display = 'grid'; // Ensure display is grid
+
+        // Dynamically set grid columns based on card size defined in CSS
+        // This makes sure the grid columns match the actual card sizes more accurately
+        const cardSize = getComputedStyle(document.documentElement).getPropertyValue('--card-size');
+        gameBoard.style.gridTemplateColumns = `repeat(${heartLayout[0].length}, var(--card-size))`;
+
+        gameBoard.style.width = 'fit-content'; // Adjust width to fit content, including gaps
         gameBoard.style.height = 'auto'; // Allow height to adjust based on content
         gameBoard.style.margin = '0 auto';
-        gameBoard.style.padding = '0.25rem';
-        gameBoard.style.boxSizing = 'border-box';
-        // Set the gap after other styles to ensure it takes precedence
-        gameBoard.style.setProperty('gap', '0.125rem', 'important'); // 2px gap
+        gameBoard.style.padding = '0'; // Remove padding here, let gap handle spacing
+        gameBoard.style.boxSizing = 'content-box'; // Ensure box model is content-box
 
         let cardIndex = 0;
         heartLayout.forEach((row, rowIndex) => {
-            const rowElement = document.createElement('div');
-            rowElement.style.display = 'contents';
-            
             row.forEach((cell, cellIndex) => {
                 if (cell === 1) {
                     const card = document.createElement('div');
-                    card.classList.add('flip-card', 'w-14', 'h-14', 'cursor-pointer', 'relative'); // Larger cards
-                    // Apply responsive classes
-                    card.classList.add('xs:w-12', 'xs:h-12', 'sm:w-14', 'sm:h-14', 'md:w-16', 'md:h-16', 'lg:w-20', 'lg:h-20');
+                    card.classList.add('flip-card', 'cursor-pointer', 'relative'); // No specific w/h classes here, let CSS handle it
 
                     // Store original index for image assignment
                     card.dataset.originalIndex = cardIndex;
@@ -164,10 +165,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     cardIndex++;
                 } else {
                     const emptyCell = document.createElement('div');
-                    // Apply responsive classes for empty cells too to maintain grid
-                    emptyCell.classList.add('w-14', 'h-14');
-                    emptyCell.classList.add('xs:w-12', 'xs:h-12', 'sm:w-14', 'sm:h-14', 'md:w-16', 'md:h-16', 'lg:w-20', 'lg:h-20');
-                    emptyCell.style.visibility = 'hidden'; // Hide empty cells but maintain grid structure
+                    emptyCell.classList.add('empty-grid-cell'); // Add a class for empty cells
                     gameBoard.appendChild(emptyCell);
                 }
             });

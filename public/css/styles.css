@@ -393,35 +393,45 @@ input[type="tel"]:focus, input[type="text"]:focus {
 }
 
 /* Responsive card sizing */
-@media (max-width: 475px) { /* Extra small devices */
-    .flip-card {
-        width: 3rem !important;  /* w-12 = 3rem = 48px */
-        height: 3rem !important; /* h-12 = 3rem = 48px */
-    }
+:root {
+    --card-size: 3.5rem; /* Default for mobile, 56px */
 }
 
-@media (min-width: 476px) and (max-width: 640px) { /* Mobile */
-    .flip-card {
-        width: 3.5rem !important;  /* w-14 = 3.5rem = 56px */
-        height: 3.5rem !important; /* h-14 = 3.5rem = 56px */
-    }
-
-    #stage-4-ask .relative {
-        padding: 30px 20px !important;
-        max-width: 350px;
+@media (max-width: 475px) { /* Extra small devices */
+    :root {
+        --card-size: 3rem;  /* 48px */
     }
 }
 
 @media (min-width: 641px) and (max-width: 1024px) { /* Tablet */
-    .flip-card {
-        width: 4rem !important;  /* w-16 = 4rem = 64px */
-        height: 4rem !important; /* h-16 = 4rem = 64px */
+    :root {
+        --card-size: 4rem;  /* 64px */
     }
 }
 
 @media (min-width: 1025px) { /* Desktop */
-    .flip-card {
-        width: 5rem !important;  /* w-20 = 5rem = 80px */
-        height: 5rem !important; /* h-20 = 5rem = 80px */
+    :root {
+        --card-size: 5rem;  /* 80px */
     }
+}
+
+.flip-card {
+    width: var(--card-size);
+    height: var(--card-size);
+}
+
+.empty-grid-cell {
+    width: var(--card-size);
+    min-width: var(--card-size); /* Ensure empty cells also respect the size */
+    height: var(--card-size);
+    min-height: var(--card-size); /* Ensure empty cells also respect the size */
+    visibility: hidden; /* Keep them hidden */
+}
+
+/* Game board layout */
+#game-board {
+    display: grid;
+    /* grid-template-columns is set in JavaScript dynamically now */
+    justify-content: center;
+    align-items: center;
 }
